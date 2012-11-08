@@ -118,6 +118,7 @@ Toggler = function Toggler (element, options) {
 	fn.open = function () {
 		var _this = this;
 		this.updateStateClass('opened');
+		this.$contents.hide();
 		this.$contents.slideDown(250, function () {
 			_this._state = 'opened';
 		});
@@ -130,6 +131,7 @@ Toggler = function Toggler (element, options) {
 	fn.close = function () {
 		var _this = this;
 		this.updateStateClass('closed');
+		this.$contents.show();
 		this.$contents.slideUp(100, function () {
 			_this._state = 'closed';
 		});

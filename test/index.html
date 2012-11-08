@@ -10,7 +10,10 @@
 <script src="mocha.js"></script>
 <script src="expect.js"></script>
 <script src="sinon-1.4.2.js"></script>
-<script>mocha.setup('bdd');</script>
+<script>mocha.setup({
+	ui: 'bdd',
+	globals: ['setTimeout', 'setInterval', 'clearTimeout', 'clearInterval']
+});</script>
 <script src="../jquery.js"></script>
 <script src="../jquery.toggler.js"></script>
 <script src="tests/toggler.js"></script>

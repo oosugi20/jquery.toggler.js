@@ -9,13 +9,19 @@
 
 var Toggler;
 var PLUGIN_NAME = 'toggler';
+var DEFAULT_OPTIONS = {
+	openedClassName: 'opened',
+	closedClassName: 'closed'
+};
+
 
 /**
  * Toggler
  * @constructor
  */
-Toggler = function Toggler (element) {
+Toggler = function Toggler (element, options) {
 	this.el = element;
+	this.options = $.extend({}, DEFAULT_OPTIONS, options);
 	this.$el = $(element);
 	this.$contents = this.$el.find('[data-toggler-contents]');
 	this.init();
@@ -68,8 +74,35 @@ Toggler = function Toggler (element) {
 			this._state = 'closed';
 		}
 
+		// クラスを更新
+		this.updateStateClass();
+
 		// イベントをバインド
 		this._eventify();
+
+		return this;
+	};
+
+
+	/**
+	 * fn.updateStateClass
+	 */
+	fn.updateStateClass = function () {
+		var openedClass = this.options.openedClassName
+		  , closedClass = this.options.closedClassName
+		;
+
+		switch (this._state) {
+			case 'opened':
+				this.$el.addClass(openedClass);
+				this.$el.removeClass(closedClass);
+				break;
+
+			case 'closed':
+				this.$el.addClass(closedClass);
+				this.$el.removeClass(openedClass);
+				break;
+		}
 
 		return this;
 	};
@@ -82,6 +115,7 @@ Toggler = function Toggler (element) {
 		var _this = this;
 		this.$contents.slideDown(250, function () {
 			_this._state = 'opened';
+			_this.updateStateClass();
 		});
 		return this;
 	};
@@ -93,6 +127,7 @@ Toggler = function Toggler (element) {
 		var _this = this;
 		this.$contents.slideUp(100, function () {
 			_this._state = 'closed';
+			_this.updateStateClass();
 		});
 		return this;
 	};
@@ -141,10 +176,10 @@ Toggler = function Toggler (element) {
 /**
  * $.fn.toggler
  */
-$.fn[PLUGIN_NAME] = function () {
+$.fn[PLUGIN_NAME] = function (options) {
 	return this.each(function () {
 		if (!$.data(this, PLUGIN_NAME)) {
-			$.data(this, PLUGIN_NAME, new Toggler(this));
+			$.data(this, PLUGIN_NAME, new Toggler(this, options));
 		}
 	});
 };

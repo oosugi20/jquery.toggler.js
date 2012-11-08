@@ -29,11 +29,31 @@
 </div>
 <!-- /.mod-togglerUnit --></div>
 
+<h2>Example 3</h2>
+<p>オプションで状態クラスを変える。</p>
+<pre><code>$('#example3').toggler({
+	openedClassName: 'custumOpened',
+	closedClassName: ''
+});</code></pre>
+
+<div id="example3">
+<a href="#" data-toggler-btn="open">開くボタン</a>
+<a href="#" data-toggler-btn="close">閉じる</a>
+<a href="#" data-toggler-btn="toggle">開閉ボタン</a>
+<div data-toggler-contents>
+<p style="height: 200px; background: #fcc;">This is toggler contents.</p>
+</div>
+<!-- /#example3 --></div>
+
 
 <script src="jquery.js"></script>
 <script src="jquery.toggler.js"></script>
 <script>
 $('.mod-togglerUnit').toggler();
+$('#example3').toggler({
+	openedClassName: 'custumOpened',
+	closedClassName: ''
+});
 </script>
 </body>
 </html>

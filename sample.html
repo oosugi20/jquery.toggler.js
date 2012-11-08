@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>$.fn.toggler</title>
+</head>
+
+<body>
+<h1>$.fn.toggler</h1>
+
+<h2>Example 1</h2>
+<div class="mod-togglerUnit">
+<a href="#" data-toggler-btn="open">開くボタン</a>
+<a href="#" data-toggler-btn="close">閉じる</a>
+<a href="#" data-toggler-btn="toggle">開閉ボタン</a>
+<div data-toggler-contents>
+<p style="height: 200px; background: #fcc;">This is toggler contents.</p>
+</div>
+<!-- /.mod-togglerUnit --></div>
+
+<h2>Example 2</h2>
+<p>最初から開いとく</p>
+<div class="mod-togglerUnit" data-toggler-init="open">
+<a href="#" data-toggler-btn="open">開くボタン</a>
+<a href="#" data-toggler-btn="close">閉じる</a>
+<a href="#" data-toggler-btn="toggle">開閉ボタン</a>
+<div data-toggler-contents>
+<p style="height: 200px; background: #fcc;">This is toggler contents.</p>
+</div>
+<!-- /.mod-togglerUnit --></div>
+
+
+<script src="jquery.js"></script>
+<script src="jquery.toggler.js"></script>
+<script>
+$('.mod-togglerUnit').toggler();
+</script>
+</body>
+</html>

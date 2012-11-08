@@ -75,7 +75,7 @@ Toggler = function Toggler (element, options) {
 		}
 
 		// クラスを更新
-		this.updateStateClass();
+		this.updateStateClass(this._state);
 
 		// イベントをバインド
 		this._eventify();
@@ -87,12 +87,12 @@ Toggler = function Toggler (element, options) {
 	/**
 	 * fn.updateStateClass
 	 */
-	fn.updateStateClass = function () {
+	fn.updateStateClass = function (strategy) {
 		var openedClass = this.options.openedClassName
 		  , closedClass = this.options.closedClassName
 		;
 
-		switch (this._state) {
+		switch (strategy) {
 			case 'opened':
 				this.$el.addClass(openedClass);
 				this.$el.removeClass(closedClass);
@@ -113,9 +113,9 @@ Toggler = function Toggler (element, options) {
 	 */
 	fn.open = function () {
 		var _this = this;
+		this.updateStateClass('opened');
 		this.$contents.slideDown(250, function () {
 			_this._state = 'opened';
-			_this.updateStateClass();
 		});
 		return this;
 	};
@@ -125,9 +125,9 @@ Toggler = function Toggler (element, options) {
 	 */
 	fn.close = function () {
 		var _this = this;
+		this.updateStateClass('closed');
 		this.$contents.slideUp(100, function () {
 			_this._state = 'closed';
-			_this.updateStateClass();
 		});
 		return this;
 	};

@@ -143,36 +143,33 @@ describe('$.fn.toggler', function () {
 		});
 
 		describe('updateStateClass', function () {
-			context('_stateがopenedの場合', function () {
+			context('引数ががopenedの場合', function () {
 				it('options.openedClassNameをつけること', function () {
 					var $toggler = $mod.eq(0);
 					var toggler = $toggler.toggler().data('toggler');
-					toggler._state = 'opened';
-					toggler.updateStateClass();
+					toggler.updateStateClass('opened');
 					expect($toggler.attr('class')).to.contain(toggler.options.openedClassName);
 				});
 				it('options.closedClassNameを外すこと', function () {
 					var $toggler = $mod.eq(0);
 					var toggler = $toggler.toggler().data('toggler');
-					toggler._state = 'opened';
 					toggler.updateStateClass();
+					toggler.updateStateClass('opened');
 					expect($toggler.attr('class')).to.not.contain(toggler.options.closedClassName);
 				});
 			});
 
-			context('_stateがclosedの場合', function () {
+			context('引数がclosedの場合', function () {
 				it('options.closedClassNameをつけること', function () {
 					var $toggler = $mod.eq(0);
 					var toggler = $toggler.toggler().data('toggler');
-					toggler._state = 'closed';
-					toggler.updateStateClass();
+					toggler.updateStateClass('closed');
 					expect($toggler.attr('class')).to.contain(toggler.options.closedClassName);
 				});
 				it('options.openedClassNameを外すこと', function () {
 					var $toggler = $mod.eq(0);
 					var toggler = $toggler.toggler().data('toggler');
-					toggler._state = 'closed';
-					toggler.updateStateClass();
+					toggler.updateStateClass('closed');
 					expect($toggler.attr('class')).to.not.contain(toggler.options.openedClassName);
 				});
 			});

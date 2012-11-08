@@ -7,4 +7,31 @@
 
 'use strict';
 
+var Toggler;
+var PLUGIN_NAME = 'toggler';
+
+/**
+ * Toggler
+ * @constructor
+ */
+Toggler = function Toggler () {
+	return this;
+};
+
+
+(function (fn) {
+})(Toggler.prototype);
+
+
+/**
+ * $.fn.toggler
+ */
+$.fn[PLUGIN_NAME] = function () {
+	return this.each(function () {
+		if (!$.data(this, PLUGIN_NAME)) {
+			$.data(this, PLUGIN_NAME, new Toggler());
+		}
+	});
+};
+
 })(jQuery, this);

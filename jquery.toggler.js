@@ -2,6 +2,7 @@
  * jquery.toggler.js
  * 開閉するUIのjQueryプラグイン
  * @author Makoto OOSUGI <oosugi20@gmail.com>
+ * @url https://github.com/oosugi20/jquery.toggler.js
  */
 ;(function ($, window, undefined) {
 

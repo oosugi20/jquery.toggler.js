@@ -64,10 +64,13 @@ Toggler = function Toggler (element, options) {
 	 * @chainable
 	 */
 	fn.init = function () {
-		var initState = this.$el.attr('data-toggler-init');
+		var initClass = this.$el.attr('class');
+		var reg = new RegExp(this.options.openedClassName);
+		var isInitOpen = reg.test(initClass);
 
-		// data-toggler-initの値が、openなら開いておき、それ以外なら閉じておく。
-		if (initState === 'open') {
+		// オープン時のクラスがHTML側に着いてたら 開いておき、
+		// それ以外なら閉じておく。
+		if (isInitOpen) {
 			this.$contents.show();
 			this._state = 'opened';
 		} else {

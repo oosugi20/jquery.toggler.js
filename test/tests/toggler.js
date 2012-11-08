@@ -15,7 +15,7 @@ describe('$.fn.toggler', function () {
 					'</div>',
 				'</div>',
 
-				'<div class="mod-toggleUnit" data-toggler-init="open">',
+				'<div class="mod-toggleUnit opened">',
 					'<a href="#" data-toggler-btn="toggle">開閉</a>',
 					'<a href="#" data-toggler-btn="open">開く</a>',
 					'<a href="#" data-toggler-btn="close">閉じる</a>',
@@ -114,31 +114,26 @@ describe('$.fn.toggler', function () {
 		});
 
 		describe('init()', function () {
-			it('data-toggler-initの値がopenだったら開いておくこと', function () {
+			it('HTMLにoptions.openedClassNameがついてたら開いておくこと', function () {
 				var $toggler = $mod.eq(0);
-				$toggler.attr('data-toggler-init', 'open');
+				$toggler.addClass('opened');
 				var toggler = $toggler.toggler().data('toggler');
 				var state = toggler.state();
 				expect(toggler.$contents.css('display')).to.not.be.equal('none');
 				expect(state).to.be.equal('opened');
+				expect($toggler.attr('class')).to.contain('opened');
+				expect($toggler.attr('class')).to.not.contain('closed');
 			});
 
-			it('data-toggler-initの値がopen以外だったら閉じておくこと', function () {
+			it('HTMLにoptions.openedClassNameがついてなかったら閉じておくこと', function () {
 				var $toggler = $mod.eq(0);
-				$toggler.attr('data-toggler-init', 'close');
+				$toggler.removeClass('opened');
 				var toggler = $toggler.toggler().data('toggler');
 				var state = toggler.state();
 				expect(toggler.$contents.css('display')).to.be.equal('none');
 				expect(state).to.be.equal('closed');
-			});
-
-			it('data-toggler-init属性がなくても閉じておくこと', function () {
-				var $toggler = $mod.eq(0);
-				$toggler.removeAttr('data-toggler-init');
-				var toggler = $toggler.toggler().data('toggler');
-				var state = toggler.state();
-				expect(toggler.$contents.css('display')).to.be.equal('none');
-				expect(state).to.be.equal('closed');
+				expect($toggler.attr('class')).to.contain('closed');
+				expect($toggler.attr('class')).to.not.contain('opened');
 			});
 		});
 

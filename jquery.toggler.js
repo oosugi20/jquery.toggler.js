@@ -35,7 +35,7 @@ Toggler = function Toggler (element, options) {
 	/**
 	 * fn._state
 	 * 状態を保持する。
-	 * @private
+	 * @protected
 	 */
 	fn._state = null;
 

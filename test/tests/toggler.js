@@ -92,7 +92,14 @@ describe('$.fn.toggler', function () {
 	});
 
 
+	/**
+	 * Toggler
+	 */
 	describe('Toggler', function () {
+
+		/**
+		 * _eventify()
+		 */
 		describe('_eventify()', function () {
 			it('ボタンクリックでボタンタイプのメソッドが呼ばれること', function () {
 				var toggler = $mod.toggler().eq(0).data('toggler');
@@ -111,65 +118,188 @@ describe('$.fn.toggler', function () {
 				expect(stubClose.calledOnce).to.be.ok();
 				expect(stubToggle.calledOnce).to.be.ok();
 			});
+
+			context('data-toggler-targetがある場合', function () {
+				it('呼び出すメソッドに引数として値を渡すこと', function () {
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var $openBtn   = toggler.$el.find('[data-toggler-btn="open"]');
+					var stubOpen   = sinon.stub(toggler, 'open');
+
+					$openBtn.attr('data-toggler-target', 'testtarget');
+					$openBtn.trigger('click');
+
+					expect(stubOpen.calledWith('testtarget')).to.be.ok();
+				});
+
+				it('data-tggler-target属性はあるが値がセットされてない時');
+			});
 		});
 
+
+		/**
+		 * init()
+		 */
 		describe('init()', function () {
 			it('HTMLにoptions.openedClassNameがついてたら開いておくこと', function () {
 				var $toggler = $mod.eq(0);
 				$toggler.addClass('opened');
 				var toggler = $toggler.toggler().data('toggler');
-				var state = toggler.state();
+				var state = toggler.$contents.data('toggler:state');
+
 				expect(toggler.$contents.css('display')).to.not.be.equal('none');
 				expect(state).to.be.equal('opened');
 				expect($toggler.attr('class')).to.contain('opened');
 				expect($toggler.attr('class')).to.not.contain('closed');
 			});
 
-			it('HTMLにoptions.openedClassNameがついてなかったら閉じておくこと', function () {
+			context('HTMLにoptions.openedClassNameのclassがついていなかった場合', function () {
+				it('コンテンツごとに opened-id の class が付いてれば開き付いてなければ閉じる', function () {
+					var $toggler = $mod.eq(0);
+
+					$toggler.removeClass('opened');
+					$toggler.append('<div data-toggler-contents="test"/>');
+					$toggler.append('<div data-toggler-contents="test2"/>');
+					$toggler.addClass('opened-test');
+
+					var toggler = $toggler.toggler().data('toggler');
+					var state0 = toggler.$contents.eq(0).data('toggler:state');
+					var state1 = toggler.$contents.eq(1).data('toggler:state');
+					var state2 = toggler.$contents.eq(2).data('toggler:state');
+
+					expect(state0).to.be.equal('closed');
+					expect(state1).to.be.equal('opened');
+					expect(state2).to.be.equal('closed');
+
+					expect(toggler.$contents.eq(0).css('display')).to.be.equal('none');
+					expect(toggler.$contents.eq(1).css('display')).to.not.be.equal('none');
+					expect(toggler.$contents.eq(2).css('display')).to.be.equal('none');
+
+					expect(/closed |closed$/.test($toggler.attr('class'))).to.not.be.ok();
+					expect(/opened |opened$/.test($toggler.attr('class'))).to.be.ok();
+				});
+
+				it('開く指定がひとつもなければ閉じておく', function () {
+					var $toggler = $mod.eq(0);
+
+					$toggler.removeClass('opened');
+					$toggler.append('<div data-toggler-contents="test"/>');
+					$toggler.append('<div data-toggler-contents="test2"/>');
+
+					var toggler = $toggler.toggler().data('toggler');
+					var state0 = toggler.$contents.eq(0).data('toggler:state');
+					var state1 = toggler.$contents.eq(1).data('toggler:state');
+					var state2 = toggler.$contents.eq(2).data('toggler:state');
+
+					expect(state0).to.be.equal('closed');
+					expect(state1).to.be.equal('closed');
+					expect(state2).to.be.equal('closed');
+
+					expect(toggler.$contents.eq(0).css('display')).to.be.equal('none');
+					expect(toggler.$contents.eq(1).css('display')).to.be.equal('none');
+					expect(toggler.$contents.eq(2).css('display')).to.be.equal('none');
+
+					expect(/closed |closed$/.test($toggler.attr('class'))).to.be.ok();
+					expect(/opened |opened$/.test($toggler.attr('class'))).to.not.be.ok();
+				});
+			});
+		});
+
+
+		/**
+		 * updateStateClass()
+		 */
+		describe('updateStateClass()', function () {
+			it('各コンテンツごとにstateがopenedだったらopened-idのclassをつけること', function () {
 				var $toggler = $mod.eq(0);
-				$toggler.removeClass('opened');
+				$toggler.append('<div data-toggler-contents="test"/>');
 				var toggler = $toggler.toggler().data('toggler');
-				var state = toggler.state();
-				expect(toggler.$contents.css('display')).to.be.equal('none');
-				expect(state).to.be.equal('closed');
-				expect($toggler.attr('class')).to.contain('closed');
-				expect($toggler.attr('class')).to.not.contain('opened');
+				var $test = toggler.$contents.filter('[data-toggler-contents="test"]');
+				$test.data('toggler:state', 'opened');
+				toggler.updateStateClass();
+				expect($toggler.attr('class')).to.contain('opened-test');
+			});
+
+			it('各コンテンツごとにstateがclosedだったらclosed-idのclassをつけること', function () {
+				var $toggler = $mod.eq(0);
+				$toggler.append('<div data-toggler-contents="test"/>');
+				var toggler = $toggler.toggler().data('toggler');
+				var $test = toggler.$contents.filter('[data-toggler-contents="test"]');
+				$test.data('toggler:state', 'closed');
+				toggler.updateStateClass();
+				expect($toggler.attr('class')).to.contain('closed-test');
+			});
+
+			it('開いてる状態のコンテンツがひとつでもあったらopenedにすること', function () {
+				var $toggler = $mod.eq(0);
+				$toggler.append('<div data-toggler-contents="test"/>');
+				var toggler = $toggler.toggler().data('toggler');
+				var $test = toggler.$contents.filter('[data-toggler-contents="test"]');
+				$test.data('toggler:state', 'opened');
+				toggler.updateStateClass();
+				expect(/opened | opened$/.test($toggler.attr('class'))).to.be.ok();
+			});
+
+			it('開いてる状態のコンテンツがひとつでもあったらclosedはつかないこと', function () {
+				var $toggler = $mod.eq(0);
+				$toggler.append('<div data-toggler-contents="test"/>');
+				var toggler = $toggler.toggler().data('toggler');
+				var $test = toggler.$contents.filter('[data-toggler-contents="test"]');
+				$test.data('toggler:state', 'opened');
+				toggler.updateStateClass();
+				expect(/closed | closed$/.test($toggler.attr('class'))).to.not.be.ok();
+			});
+
+			it('開いてる状態のコンテンツがひとつもなければclosedがつくこと', function () {
+				var $toggler = $mod.eq(0);
+				var toggler = $toggler.toggler().data('toggler');
+				toggler.$contents.data('toggler:state', 'closed');
+				toggler.updateStateClass();
+				expect(/closed | closed$/.test($toggler.attr('class'))).to.be.ok();
+			});
+
+			it('開いてる状態のコンテンツがひとつもなければopenedはつかないこと', function () {
+				var $toggler = $mod.eq(0);
+				var toggler = $toggler.toggler().data('toggler');
+				toggler.$contents.data('toggler:state', 'closed');
+				toggler.updateStateClass();
+				expect(/opened | opened$/.test($toggler.attr('class'))).to.not.be.ok();
 			});
 		});
 
-		describe('updateStateClass', function () {
-			context('引数ががopenedの場合', function () {
-				it('options.openedClassNameをつけること', function () {
-					var $toggler = $mod.eq(0);
-					var toggler = $toggler.toggler().data('toggler');
-					toggler.updateStateClass('opened');
-					expect($toggler.attr('class')).to.contain(toggler.options.openedClassName);
-				});
-				it('options.closedClassNameを外すこと', function () {
-					var $toggler = $mod.eq(0);
-					var toggler = $toggler.toggler().data('toggler');
-					toggler.updateStateClass();
-					toggler.updateStateClass('opened');
-					expect($toggler.attr('class')).to.not.contain(toggler.options.closedClassName);
-				});
+
+		/**
+		 * filterContents()
+		 */
+		describe('filterContens()', function () {
+			it('引数に渡された値と this.$contents の\
+				data-toggler-contents の値が一致するものを返すこと', function () {
+				$mod.eq(0).append('<div data-toggler-contents="test">');
+				$mod.eq(0).append('<div data-toggler-contents="test">');
+
+				var toggler = $mod.toggler().eq(0).data('toggler');
+				var $filterContents = toggler.filterContents('test');
+
+				expect($filterContents).to.have.length(2);
 			});
 
-			context('引数がclosedの場合', function () {
-				it('options.closedClassNameをつけること', function () {
-					var $toggler = $mod.eq(0);
-					var toggler = $toggler.toggler().data('toggler');
-					toggler.updateStateClass('closed');
-					expect($toggler.attr('class')).to.contain(toggler.options.closedClassName);
-				});
-				it('options.openedClassNameを外すこと', function () {
-					var $toggler = $mod.eq(0);
-					var toggler = $toggler.toggler().data('toggler');
-					toggler.updateStateClass('closed');
-					expect($toggler.attr('class')).to.not.contain(toggler.options.openedClassName);
-				});
+			it('undefined / \'\' が渡されたときは全ての this.$contents を返すこと', function () {
+				$mod.eq(0).append('<div data-toggler-contents="test">');
+				$mod.eq(0).append('<div data-toggler-contents="test">');
+
+				var toggler = $mod.toggler().eq(0).data('toggler');
+				var $filterContents = toggler.filterContents('');
+
+				expect($filterContents).to.have.length(3);
+
+				$filterContents = toggler.filterContents(undefined);
+				expect($filterContents).to.have.length(3);
 			});
 		});
 
+
+		/**
+		 * open()
+		 */
 		describe('open()', function () {
 			it('コンテンツが開くこと', function () {
 				var toggler = $mod.toggler().eq(0).data('toggler');
@@ -181,11 +311,81 @@ describe('$.fn.toggler', function () {
 				stub.restore();
 			});
 
+			it('開いたthis.$contentsのdata(\'toggler:state\')をopenedにすること', function () {
+				var toggler = $mod.toggler().eq(0).data('toggler');
+
+				toggler.open();
+
+				expect(toggler.$contents.data('toggler:state')).to.be.equal('opened');
+			});
+
+			context('引数targetが渡された場合', function () {
+				it('this.$contentsのdata-toggler-contentsの値と一致するものだけ開くこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var stub = sinon.stub(jQuery.fn, 'slideDown', function () {
+						$(this).data('test', true);
+					});
+
+					toggler.open('test');
+
+					expect(toggler.$contents.eq(0).data('test')).to.not.be.equal(true);
+					expect(toggler.$contents.eq(1).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(2).data('test')).to.be.equal(true);
+
+					stub.restore();
+				});
+			});
+
+			context('引数がエラーの場合', function () {
+				it('undefinedならthis.$contentsが全部開くこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var stub = sinon.stub(jQuery.fn, 'slideDown', function () {
+						$(this).data('test', true);
+					});
+
+					toggler.open(undefined);
+
+					expect(toggler.$contents.eq(0).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(1).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(2).data('test')).to.be.equal(true);
+
+					stub.restore();
+				});
+
+				it('空のStringならthis.$contentsが全部開くこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var stub = sinon.stub(jQuery.fn, 'slideDown', function () {
+						$(this).data('test', true);
+					});
+
+					toggler.open('');
+
+					expect(toggler.$contents.eq(0).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(1).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(2).data('test')).to.be.equal(true);
+
+					stub.restore();
+				});
+			});
+
 			it('開いたあとに状態を更新すること');
 
 			it('連続でクリックしても大丈夫なこと');
 		});
 
+
+		/**
+		 * close()
+		 */
 		describe('close()', function () {
 			it('コンテンツが閉じること', function () {
 				var toggler = $mod.toggler().eq(0).data('toggler');
@@ -197,28 +397,104 @@ describe('$.fn.toggler', function () {
 				stub.restore();
 			});
 
+			it('閉じたthis.$contentsのdata(\'toggler:state\')をclosedにすること', function () {
+				var toggler = $mod.toggler().eq(0).data('toggler');
+
+				toggler.close();
+
+				expect(toggler.$contents.data('toggler:state')).to.be.equal('closed');
+			});
+
+			context('引数targetが渡された場合', function () {
+				it('this.$contentsのdata-toggler-contentsの値と一致するものだけ開くこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var stub = sinon.stub(jQuery.fn, 'slideUp', function () {
+						$(this).data('test', true);
+					});
+
+					toggler.close('test');
+
+					expect(toggler.$contents.eq(0).data('test')).to.not.be.equal(true);
+					expect(toggler.$contents.eq(1).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(2).data('test')).to.be.equal(true);
+
+					stub.restore();
+				});
+			});
+
+			context('引数がエラーの場合', function () {
+				it('undefinedならthis.$contentsが全部開くこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var stub = sinon.stub(jQuery.fn, 'slideUp', function () {
+						$(this).data('test', true);
+					});
+
+					toggler.close(undefined);
+
+					expect(toggler.$contents.eq(0).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(1).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(2).data('test')).to.be.equal(true);
+
+					stub.restore();
+				});
+
+				it('空のStringならthis.$contentsが全部開くこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+					$mod.eq(0).append('<div data-toggler-contents="test">');
+
+					var toggler = $mod.toggler().eq(0).data('toggler');
+					var stub = sinon.stub(jQuery.fn, 'slideUp', function () {
+						$(this).data('test', true);
+					});
+
+					toggler.close('');
+
+					expect(toggler.$contents.eq(0).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(1).data('test')).to.be.equal(true);
+					expect(toggler.$contents.eq(2).data('test')).to.be.equal(true);
+
+					stub.restore();
+				});
+			});
+
 			it('開いたあとに状態を更新すること');
 
 			it('連続でクリックしても大丈夫なこと');
 		});
 
+
+		/**
+		 * toggle()
+		 */
 		describe('toggle()', function () {
 			context('開いてたとき', function () {
 				it('close()が呼ばれること', function () {
 					var toggler = $mod.toggler().eq(0).data('toggler');
 					var stub = sinon.stub(toggler, 'close');
-					var fakeState = sinon.stub(toggler, 'state', function () {
-						return 'opened';
-					});
+					toggler.$contents.data('toggler:state', 'opened');
 					toggler.toggle();
 					expect(stub.calledOnce).to.be.ok();
 				});
+
+				it('close()の引数にtoggle()の引数を渡すこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test"/>');
+					var toggler = $mod.eq(0).toggler().data('toggler');
+					var stub = sinon.stub(toggler, 'close');
+					toggler.$contents.data('toggler:state', 'opened');
+					toggler.toggle('test');
+					expect(stub.calledWith('test')).to.be.ok();
+				});
+
 				it('open()は呼ばれないこと', function () {
 					var toggler = $mod.toggler().eq(0).data('toggler');
 					var stub = sinon.stub(toggler, 'open');
-					var fakeState = sinon.stub(toggler, 'state', function () {
-						return 'opened';
-					});
+					toggler.$contents.data('toggler:state', 'opened');
 					toggler.toggle();
 					expect(stub.calledOnce).to.not.be.ok();
 				})
@@ -227,56 +503,66 @@ describe('$.fn.toggler', function () {
 				it('open()が呼ばれること', function () {
 					var toggler = $mod.toggler().eq(0).data('toggler');
 					var stub = sinon.stub(toggler, 'open');
-					var fakeState = sinon.stub(toggler, 'state', function () {
-						return 'closed';
-					});
+					toggler.$contents.data('toggler:state', 'closed');
 					toggler.toggle();
 					expect(stub.calledOnce).to.be.ok();
 				});
+
+				it('open()の引数にtoggle()の引数を渡すこと', function () {
+					$mod.eq(0).append('<div data-toggler-contents="test"/>');
+					var toggler = $mod.eq(0).toggler().data('toggler');
+					var stub = sinon.stub(toggler, 'open');
+					toggler.$contents.data('toggler:state', 'closed');
+					toggler.toggle('test');
+					expect(stub.calledWith('test')).to.be.ok();
+				});
+
 				it('close()は呼ばれないこと', function () {
 					var toggler = $mod.toggler().eq(0).data('toggler');
 					var stub = sinon.stub(toggler, 'close');
-					var fakeState = sinon.stub(toggler, 'state', function () {
-						return 'closed';
-					});
+					toggler.$contents.data('toggler:state', 'closed');
 					toggler.toggle();
 					expect(stub.calledOnce).to.not.be.ok();
 				})
 			});
 
 			it('連続でクリックしても大丈夫なこと');
+
+			it('contentsが復数あるときのstateの扱い的なの');
 		});
 
 
 		describe('state()', function () {
-			it('opened|closed|animatingを返すこと', function () {
-				var toggler = $mod.toggler().eq(0).data('toggler');
-				var state = toggler.state();
-				var test = /opened|closed|animating/.test(state);
-				expect(test).to.be.ok();
-			});
+			it('未実装');
 
-			it('this._stateの値を返すこと', function () {
-				var toggler = $mod.toggler().eq(0).data('toggler');
-				var state = toggler.state();
-				expect(state).to.be.equal(toggler._state)
-			});
+			//it('opened|closed|animatingを返すこと', function () {
+			//	var toggler = $mod.toggler().eq(0).data('toggler');
+			//	var state = toggler.state();
+			//	var test = /opened|closed|animating/.test(state);
+			//	expect(test).to.be.ok();
+			//});
 
-			it('アニメーション中ならanimatingを返すこと', function () {
-				var toggler = $mod.toggler().eq(0).data('toggler');
-				toggler.$contents.show();
-				toggler.$contents.slideDown(100);
-				expect(toggler.state()).to.be.equal('animating')
-			});
+			//it('this._stateの値を返すこと', function () {
+			//	var toggler = $mod.toggler().eq(0).data('toggler');
+			//	var state = toggler.state();
+			//	expect(state).to.be.equal(toggler._state)
+			//});
 
-			it('アニメーションが終わった後はanimatingを返さないこと', function (done) {
-				var toggler = $mod.toggler().eq(0).data('toggler');
-				toggler.$contents.show();
-				toggler.$contents.slideDown(100, function () {
-					expect(toggler.state()).to.not.be.equal('animating');
-					done();
-				});
-			});
+			//it('アニメーション中ならanimatingを返すこと', function () {
+			//	var toggler = $mod.toggler().eq(0).data('toggler');
+			//	toggler.$contents.show();
+			//	toggler.$contents.slideDown(100);
+			//	expect(toggler.state()).to.be.equal('animating')
+			//});
+
+			//it('アニメーションが終わった後はanimatingを返さないこと', function (done) {
+			//	var toggler = $mod.toggler().eq(0).data('toggler');
+			//	toggler.$contents.show();
+			//	toggler.$contents.slideDown(100, function () {
+			//		expect(toggler.state()).to.not.be.equal('animating');
+			//		done();
+			//	});
+			//});
 		});
 	});
 });

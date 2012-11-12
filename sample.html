@@ -46,6 +46,28 @@
 <!-- /#example3 --></div>
 
 
+<h2>Example 4</h2>
+<div id="example4" class="opened-fuga">
+<a href="#" data-toggler-btn="toggle">全部開閉</a>
+<a href="#" data-toggler-btn="toggle" data-toggler-target="hoge">hogeだけ開閉</a>
+<a href="#" data-toggler-btn="toggle" data-toggler-target="fuga">fugaだけ開閉</a>
+<div data-toggler-contents="hoge">
+<p style="height: 200px; background: #fcc;">This is toggler contents `hoge`.</p>
+</div>
+<div data-toggler-contents>
+<p style="height: 200px; background: #fcc;">This is toggler contents.</p>
+</div>
+<div data-toggler-contents="hoge">
+<p style="height: 200px; background: #fcc;">This is toggler contents `hoge`.</p>
+</div>
+<div data-toggler-contents="fuga">
+<p style="height: 200px; background: #fcc;">This is toggler contents `fuga`.</p>
+</div>
+</div>
+
+
+<div style="height: 500px"></div>
+
 <script src="jquery.js"></script>
 <script src="jquery.toggler.js"></script>
 <script>
@@ -54,6 +76,7 @@ $('#example3').toggler({
 	openedClassName: 'custumOpened',
 	closedClassName: ''
 });
+$('#example4').toggler();
 </script>
 </body>
 </html>

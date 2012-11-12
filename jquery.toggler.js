@@ -189,18 +189,20 @@ Toggler = function Toggler (element, options) {
 		var speed = this.options.openSpeed;
 		var $target = this.filterContents(target);
 
-		$target.data('toggler:state', 'opened');
-		this.updateStateClass();
+		if ($target.data('toggler:state') !== 'opened') {
+			$target.data('toggler:state', 'opened');
+			this.updateStateClass();
 
-		$target.hide();
+			$target.hide();
 
-		switch (effect) {
-			case 'fade':
-				$target.fadeIn(speed);
-				break;
-			default:
-				$target.slideDown(speed);
-				break;
+			switch (effect) {
+				case 'fade':
+					$target.fadeIn(speed);
+					break;
+				default:
+					$target.slideDown(speed);
+					break;
+			}
 		}
 
 		return this;
@@ -217,18 +219,20 @@ Toggler = function Toggler (element, options) {
 		var speed = this.options.closeSpeed;
 		var $target = this.filterContents(target);
 
-		$target.data('toggler:state', 'closed');
-		this.updateStateClass();
+		if ($target.data('toggler:state') !== 'closed') {
+			$target.data('toggler:state', 'closed');
+			this.updateStateClass();
 
-		$target.show();
+			$target.show();
 
-		switch (effect) {
-			case 'fade':
-				$target.fadeOut(speed);
-				break;
-			default:
-				$target.slideUp(speed);
-				break;
+			switch (effect) {
+				case 'fade':
+					$target.fadeOut(speed);
+					break;
+				default:
+					$target.slideUp(speed);
+					break;
+			}
 		}
 
 		return this;

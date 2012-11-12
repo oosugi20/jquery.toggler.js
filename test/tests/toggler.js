@@ -311,6 +311,17 @@ describe('$.fn.toggler', function () {
 				stub.restore();
 			});
 
+			it('元々開いてたら再度開かないこと', function () {
+				$mod.eq(0).addClass('opened');
+				var toggler = $mod.eq(0).toggler().data('toggler');
+				var stub = sinon.stub(jQuery.fn, 'slideDown');
+
+				toggler.open();
+				expect(stub.calledOnce).to.not.be.ok();
+
+				stub.restore();
+			});
+
 			it('開いたthis.$contentsのdata(\'toggler:state\')をopenedにすること', function () {
 				var toggler = $mod.toggler().eq(0).data('toggler');
 
@@ -415,11 +426,22 @@ describe('$.fn.toggler', function () {
 		 */
 		describe('close()', function () {
 			it('コンテンツが閉じること', function () {
-				var toggler = $mod.toggler().eq(0).data('toggler');
+				$mod.eq(0).addClass('opened');
+				var toggler = $mod.eq(0).toggler().data('toggler');
 				var stub = sinon.stub(jQuery.fn, 'slideUp');
 
 				toggler.close();
 				expect(stub.calledOnce).to.be.ok();
+
+				stub.restore();
+			});
+
+			it('元々閉じてたら再度閉じないこと', function () {
+				var toggler = $mod.eq(0).toggler().data('toggler');
+				var stub = sinon.stub(jQuery.fn, 'slideUp');
+
+				toggler.close();
+				expect(stub.calledOnce).to.not.be.ok();
 
 				stub.restore();
 			});
@@ -434,6 +456,7 @@ describe('$.fn.toggler', function () {
 
 			context('オプションのeffectがslideの場合', function () {
 				it('オプションのcloseSpeedの値を引数にslideUpが呼ばれること', function () {
+					$mod.eq(0).addClass('opened');
 					var toggler = $mod.eq(0).toggler({
 						effect: 'slide',
 						closeSpeed: 300
@@ -447,6 +470,7 @@ describe('$.fn.toggler', function () {
 
 			context('オプションのeffectがfadeの場合', function () {
 				it('オプションのcloseSpeedの値を引数にfadeOutが呼ばれること', function () {
+					$mod.eq(0).addClass('opened');
 					var toggler = $mod.eq(0).toggler({
 						effect: 'fade',
 						closeSpeed: 300
@@ -461,6 +485,7 @@ describe('$.fn.toggler', function () {
 
 			context('引数targetが渡された場合', function () {
 				it('this.$contentsのdata-toggler-contentsの値と一致するものだけ開くこと', function () {
+					$mod.eq(0).addClass('opened');
 					$mod.eq(0).append('<div data-toggler-contents="test">');
 					$mod.eq(0).append('<div data-toggler-contents="test">');
 
@@ -480,7 +505,8 @@ describe('$.fn.toggler', function () {
 			});
 
 			context('引数がエラーの場合', function () {
-				it('undefinedならthis.$contentsが全部開くこと', function () {
+				it('undefinedならthis.$contentsが全部閉じること', function () {
+					$mod.eq(0).addClass('opened');
 					$mod.eq(0).append('<div data-toggler-contents="test">');
 					$mod.eq(0).append('<div data-toggler-contents="test">');
 
@@ -498,7 +524,8 @@ describe('$.fn.toggler', function () {
 					stub.restore();
 				});
 
-				it('空のStringならthis.$contentsが全部開くこと', function () {
+				it('空のStringならthis.$contentsが全部閉じること', function () {
+					$mod.eq(0).addClass('opened');
 					$mod.eq(0).append('<div data-toggler-contents="test">');
 					$mod.eq(0).append('<div data-toggler-contents="test">');
 

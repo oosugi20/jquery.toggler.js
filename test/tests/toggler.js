@@ -319,6 +319,33 @@ describe('$.fn.toggler', function () {
 				expect(toggler.$contents.data('toggler:state')).to.be.equal('opened');
 			});
 
+			context('オプションのeffectがslideの場合', function () {
+				it('オプションのopenSpeedの値を引数にslideDownが呼ばれること', function () {
+					var toggler = $mod.eq(0).toggler({
+						effect: 'slide',
+						openSpeed: 300
+					}).data('toggler');
+					var spy = sinon.spy(jQuery.fn, 'slideDown');
+					toggler.open();
+					expect(spy.calledWith(300)).to.be.ok();
+					spy.restore();
+				});
+			});
+
+			context('オプションのeffectがfadeの場合', function () {
+				it('オプションのopenSpeedの値を引数にfadeInが呼ばれること', function () {
+					var toggler = $mod.eq(0).toggler({
+						effect: 'fade',
+						openSpeed: 300
+					}).data('toggler');
+					var spy = sinon.spy(jQuery.fn, 'fadeIn');
+					toggler.open();
+					expect(spy.calledWith(300)).to.be.ok();
+					spy.restore();
+				});
+			});
+
+
 			context('引数targetが渡された場合', function () {
 				it('this.$contentsのdata-toggler-contentsの値と一致するものだけ開くこと', function () {
 					$mod.eq(0).append('<div data-toggler-contents="test">');
@@ -404,6 +431,33 @@ describe('$.fn.toggler', function () {
 
 				expect(toggler.$contents.data('toggler:state')).to.be.equal('closed');
 			});
+
+			context('オプションのeffectがslideの場合', function () {
+				it('オプションのcloseSpeedの値を引数にslideUpが呼ばれること', function () {
+					var toggler = $mod.eq(0).toggler({
+						effect: 'slide',
+						closeSpeed: 300
+					}).data('toggler');
+					var spy = sinon.spy(jQuery.fn, 'slideUp');
+					toggler.close();
+					expect(spy.calledWith(300)).to.be.ok();
+					spy.restore();
+				});
+			});
+
+			context('オプションのeffectがfadeの場合', function () {
+				it('オプションのcloseSpeedの値を引数にfadeOutが呼ばれること', function () {
+					var toggler = $mod.eq(0).toggler({
+						effect: 'fade',
+						closeSpeed: 300
+					}).data('toggler');
+					var spy = sinon.spy(jQuery.fn, 'fadeOut');
+					toggler.close();
+					expect(spy.calledWith(300)).to.be.ok();
+					spy.restore();
+				});
+			});
+
 
 			context('引数targetが渡された場合', function () {
 				it('this.$contentsのdata-toggler-contentsの値と一致するものだけ開くこと', function () {

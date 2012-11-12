@@ -12,7 +12,10 @@ var Toggler;
 var PLUGIN_NAME = 'toggler';
 var DEFAULT_OPTIONS = {
 	openedClassName: 'opened',
-	closedClassName: 'closed'
+	closedClassName: 'closed',
+	effect: 'slide',
+	openSpeed: 250,
+	closeSpeed: 100
 };
 
 
@@ -182,13 +185,23 @@ Toggler = function Toggler (element, options) {
 	 */
 	fn.open = function (target) {
 		var _this = this;
+		var effect = this.options.effect;
+		var speed = this.options.openSpeed;
 		var $target = this.filterContents(target);
 
 		$target.data('toggler:state', 'opened');
 		this.updateStateClass();
 
 		$target.hide();
-		$target.slideDown(250);
+
+		switch (effect) {
+			case 'fade':
+				$target.fadeIn(speed);
+				break;
+			default:
+				$target.slideDown(speed);
+				break;
+		}
 
 		return this;
 	};
@@ -200,13 +213,23 @@ Toggler = function Toggler (element, options) {
 	 */
 	fn.close = function (target) {
 		var _this = this;
+		var effect = this.options.effect;
+		var speed = this.options.closeSpeed;
 		var $target = this.filterContents(target);
 
 		$target.data('toggler:state', 'closed');
 		this.updateStateClass();
 
 		$target.show();
-		$target.slideUp(100);
+
+		switch (effect) {
+			case 'fade':
+				$target.fadeOut(speed);
+				break;
+			default:
+				$target.slideUp(speed);
+				break;
+		}
 
 		return this;
 	};

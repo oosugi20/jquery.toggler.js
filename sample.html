@@ -12,7 +12,7 @@
 <div class="mod-togglerUnit">
 <a href="#" data-toggler-btn="open">開くボタン</a>
 <a href="#" data-toggler-btn="close">閉じる</a>
-<a href="#" data-toggler-btn="toggle">開閉ボタン</a>
+<a href="#" data-toggler-btn="toggle" data-toggler-togglelabel="↑開閉ボタン">↓開閉ボタン</a>
 <div data-toggler-contents>
 <p style="height: 200px; background: #fcc;">This is toggler contents.</p>
 </div>
@@ -23,7 +23,8 @@
 <div class="mod-togglerUnit opened">
 <a href="#" data-toggler-btn="open">開くボタン</a>
 <a href="#" data-toggler-btn="close">閉じる</a>
-<a href="#" data-toggler-btn="toggle">開閉ボタン</a>
+<a href="#" data-toggler-btn="close">閉じる</a>
+<a href="#" data-toggler-btn="toggle" data-toggler-togglelabel="↑開閉ボタン">↓開閉ボタン</a>
 <div data-toggler-contents>
 <p style="height: 200px; background: #fcc;">This is toggler contents.</p>
 </div>
@@ -39,7 +40,7 @@
 <div id="example3">
 <a href="#" data-toggler-btn="open">開くボタン</a>
 <a href="#" data-toggler-btn="close">閉じる</a>
-<a href="#" data-toggler-btn="toggle">開閉ボタン</a>
+<a href="#" data-toggler-btn="toggle" data-toggler-togglelabel="↑開閉ボタン">↓開閉ボタン</a>
 <div data-toggler-contents>
 <p style="height: 200px; background: #fcc;">This is toggler contents.</p>
 </div>
@@ -47,6 +48,7 @@
 
 
 <h2>Example 4</h2>
+<p>data-toggler-togglelabelを付けないとテキストは変わらない。現状ラベルが違うボタンが復数あるとラベルの切り替えは使えない。</p>
 <div id="example4" class="opened-fuga">
 <a href="#" data-toggler-btn="toggle">全部開閉</a>
 <a href="#" data-toggler-btn="toggle" data-toggler-target="hoge">hogeだけ開閉</a>
@@ -66,6 +68,35 @@
 </div>
 
 
+<h2>Example 5</h2>
+<p>アコーディオンメニュー風。開くのは常に1個。</p>
+<pre><code>$('#example5').toggler({
+	autoClose: true
+});</code></pre>
+<div id="example5" class="opened-fuga">
+<ul>
+<li>
+	<a href="#" data-toggler-btn="toggle" data-toggler-target="menu1">メニュー1</a>
+	<div data-toggler-contents="menu1">
+		メニュー1のコンテンツ
+	</div>
+</li>
+<li>
+	<a href="#" data-toggler-btn="toggle" data-toggler-target="menu2">メニュー2</a>
+	<div data-toggler-contents="menu2">
+		メニュー2のコンテンツ
+	</div>
+</li>
+<li>
+	<a href="#" data-toggler-btn="toggle" data-toggler-target="menu3">メニュー3</a>
+	<div data-toggler-contents="menu3">
+		メニュー3のコンテンツ
+	</div>
+</li>
+</ul>
+</div>
+
+
 <div style="height: 500px"></div>
 
 <script src="jquery.js"></script>
@@ -77,6 +108,9 @@ $('#example3').toggler({
 	closedClassName: ''
 });
 $('#example4').toggler();
+$('#example5').toggler({
+	autoClose: true
+});
 </script>
 </body>
 </html>

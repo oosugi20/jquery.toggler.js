@@ -8,27 +8,31 @@
 
 'use strict';
 
-var Toggler;
+var $window = $(window);
+var MODULE_NAME = 'Toggler';
 var PLUGIN_NAME = 'toggler';
+var Module;
 var DEFAULT_OPTIONS = {
 	openedClassName: 'opened',
 	closedClassName: 'closed',
+	autoClose: false,
 	effect: 'slide',
+	adjustPosition: false,
 	openSpeed: 250,
 	closeSpeed: 100
 };
 
 
 /**
- * Toggler
+ * Module
  * @constructor
  */
-Toggler = function Toggler (element, options) {
+Module = function Module (element, options) {
 	this.el = element;
 	this.options = $.extend({}, DEFAULT_OPTIONS, options);
 	this.$el = $(element);
 	this.$contents = this.$el.find('[data-toggler-contents]');
-	this.init();
+	this.$btn = this.$el.find('[data-toggler-btn]');
 	return this;
 };
 
@@ -48,9 +52,13 @@ Toggler = function Toggler (element, options) {
 		// これが渡された場合は、data-toggler-contentsの値が一致するものだけ開閉する。
 		// undefinedが渡された場合は、data-toggler-contents全部が対象となる。
 		this.$el.on('click', '[data-toggler-btn]', function (e) {
-			var type = $(this).attr('data-toggler-btn');
-			var target = $(this).attr('data-toggler-target');
+			var $this = $(this)
+			var type = $this.attr('data-toggler-btn');
+			var target = $this.attr('data-toggler-target');
 			_this[type](target);
+			if (type === 'toggle') {
+				_this.refreshLabel();
+			}
 			e.preventDefault();
 		});
 
@@ -187,20 +195,51 @@ Toggler = function Toggler (element, options) {
 		var _this = this;
 		var effect = this.options.effect;
 		var speed = this.options.openSpeed;
+		var isAutoClose = this.options.autoClose;
 		var $target = this.filterContents(target);
+		var $others = this.$contents.not($target);
 
 		if ($target.data('toggler:state') !== 'opened') {
+
+			$others.data('toggler:state', 'closed');
+			if (isAutoClose) {
+				switch (effect) {
+					case 'fade':
+						$others.stop(false, true).fadeOut(speed);
+						break;
+					case 'slide':
+						$others.stop(false, true).slideUp(speed);
+						break;
+					case 'none':
+						$others.stop(false, true).hide();
+						break;
+					default:
+						$others.stop(false, true).slideUp(speed);
+						break;
+				}
+			}
+
 			$target.data('toggler:state', 'opened');
 			this.updateStateClass();
+
+			// 開いた時のスクロール量を保持しておき、
+			// 閉じた時にこの位置に戻す。
+			this._scrollTop = $window.scrollTop();
 
 			$target.hide();
 
 			switch (effect) {
 				case 'fade':
-					$target.fadeIn(speed);
+					$target.stop(false, true).fadeIn(speed);
+					break;
+				case 'slide':
+					$target.stop(false, true).slideDown(speed);
+					break;
+				case 'none':
+					$target.stop(false, true).show();
 					break;
 				default:
-					$target.slideDown(speed);
+					$target.stop(false, true).slideDown(speed);
 					break;
 			}
 		}
@@ -217,7 +256,8 @@ Toggler = function Toggler (element, options) {
 		var _this = this;
 		var effect = this.options.effect;
 		var speed = this.options.closeSpeed;
-		var $target = this.filterContents(target);
+		var adjustPosition = this.options.adjustPosition;
+		var $target = (target) ? this.filterContents(target) : this.$contents;
 
 		if ($target.data('toggler:state') !== 'closed') {
 			$target.data('toggler:state', 'closed');
@@ -227,11 +267,26 @@ Toggler = function Toggler (element, options) {
 
 			switch (effect) {
 				case 'fade':
-					$target.fadeOut(speed);
+					$target.stop(false, true).fadeOut(speed);
+					break;
+				case 'slide':
+					$target.stop(false, true).slideUp(speed);
+					break;
+				case 'none':
+					$target.stop(false, true).hide();
 					break;
 				default:
-					$target.slideUp(speed);
+					$target.stop(false, true).slideUp(speed);
 					break;
+			}
+
+			// オプションがtrueの場合、開いた時のスクロール量に戻す
+			if (adjustPosition) {
+				// 開いた時のスクロール量が保持されていない場合
+				// （初期状態で開いていた場合）
+				// 要素がウィンドウの真ん中にくるようにする。
+				this._scrollTop = this._scrollTop || this.$el.offset().top - ($window.height() / 2);
+				$window.scrollTop(this._scrollTop);
 			}
 		}
 
@@ -264,6 +319,25 @@ Toggler = function Toggler (element, options) {
 		return this;
 	};
 
+
+	/**
+	 * fn.refreshLabel
+	 * ボタンのラベルを更新する。
+	 * [data-toggler-togglelable]の値を参照し、存在しない場合は、
+	 * ボタン自体のテキストを返す。
+	 *
+	 * @chainable
+	 */
+	fn.refreshLabel = function () {
+		var $btn = this.$btn.filter('[data-toggler-togglelabel]');
+		var label = $btn.attr('data-toggler-togglelabel') || $btn.text();
+		var defaultLabel = $btn.text();
+		$btn.attr('data-toggler-togglelabel', defaultLabel);
+		$btn.text(label);
+		return this;
+	};
+
+
 	/**
 	 * fn.state
 	 * [TODO] 現状使ってないけど、target渡したらその分の状態、渡さなかったら全部の〜
@@ -282,18 +356,20 @@ Toggler = function Toggler (element, options) {
 	//	return this._state;
 	//};
 
-})(Toggler.prototype);
+})(Module.prototype);
 
 
-/**
- * $.fn.toggler
- */
+// set jquery.fn
 $.fn[PLUGIN_NAME] = function (options) {
 	return this.each(function () {
-		if (!$.data(this, PLUGIN_NAME)) {
-			$.data(this, PLUGIN_NAME, new Toggler(this, options));
-		}
+		var module;
+		module = new Module(this, options);
+		$.data(this, PLUGIN_NAME, module);
+		module.init();
 	});
 };
+
+// set global
+$[MODULE_NAME] = Module;
 
 })(jQuery, this);

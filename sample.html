@@ -97,6 +97,19 @@
 </div>
 
 
+<h2>Example 6</h2>
+<p>タブ</p>
+<p>アニメオフだったらタブっぽくも使える</p>
+<div id="example6" class="opened-tab1">
+<ul>
+<li><a href="#" data-toggler-btn="open" data-toggler-target="tab1">tab1</a></li>
+<li><a href="#" data-toggler-btn="open" data-toggler-target="tab2">tab2</a></li>
+</ul>
+<div data-toggler-contents="tab1">tab1のコンテンツ</div>
+<div data-toggler-contents="tab2">tab2のコンテンツ</div>
+</div>
+
+
 <div style="height: 500px"></div>
 
 <script src="jquery.js"></script>
@@ -109,6 +122,10 @@ $('#example3').toggler({
 });
 $('#example4').toggler();
 $('#example5').toggler({
+	autoClose: true
+});
+$('#example6').toggler({
+	effect: 'none',
 	autoClose: true
 });
 </script>

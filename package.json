@@ -1,6 +1,6 @@
 {
   "name": "jquery.toggler.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "開閉するやつ。簡易なタブにも使える。",
   "repository": {
     "type": "git",

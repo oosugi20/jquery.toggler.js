@@ -11,6 +11,7 @@ var DEFAULT_OPTIONS = {
 	closedClassName: 'closed',
 	autoClose: false,
 	effect: 'slide',
+	easing: 'swing',
 	adjustPosition: false,
 	openSpeed: 250,
 	closeSpeed: 100
@@ -189,6 +190,7 @@ Module = function Module (element, options) {
 		var _this = this;
 		var effect = this.options.effect;
 		var speed = this.options.openSpeed;
+		var easing = this.options.easing;
 		var isAutoClose = this.options.autoClose;
 		var $target = this.filterContents(target);
 		var $others = this.$contents.not($target);
@@ -199,16 +201,25 @@ Module = function Module (element, options) {
 			if (isAutoClose) {
 				switch (effect) {
 					case 'fade':
-						$others.stop(false, true).fadeOut(speed);
+						$others.stop(false, true).fadeOut({
+							duration: speed,
+							easing: easing
+						});
 						break;
 					case 'slide':
-						$others.stop(false, true).slideUp(speed);
+						$others.stop(false, true).slideUp({
+							duration: speed,
+							easing: easing
+						});
 						break;
 					case 'none':
 						$others.stop(false, true).hide();
 						break;
 					default:
-						$others.stop(false, true).slideUp(speed);
+						$others.stop(false, true).slideUp({
+							duration: speed,
+							easing: easing
+						});
 						break;
 				}
 			}
@@ -224,16 +235,25 @@ Module = function Module (element, options) {
 
 			switch (effect) {
 				case 'fade':
-					$target.stop(false, true).fadeIn(speed);
+					$target.stop(false, true).fadeIn({
+						duration: speed,
+						easing: easing
+					});
 					break;
 				case 'slide':
-					$target.stop(false, true).slideDown(speed);
+					$target.stop(false, true).slideDown({
+						duration: speed,
+						easing: easing
+					});
 					break;
 				case 'none':
 					$target.stop(false, true).show();
 					break;
 				default:
-					$target.stop(false, true).slideDown(speed);
+					$target.stop(false, true).slideDown({
+						duration: speed,
+						easing: easing
+					});
 					break;
 			}
 		}
@@ -250,6 +270,7 @@ Module = function Module (element, options) {
 		var _this = this;
 		var effect = this.options.effect;
 		var speed = this.options.closeSpeed;
+		var easing = this.options.easing;
 		var adjustPosition = this.options.adjustPosition;
 		var $target = (target) ? this.filterContents(target) : this.$contents;
 
@@ -261,16 +282,25 @@ Module = function Module (element, options) {
 
 			switch (effect) {
 				case 'fade':
-					$target.stop(false, true).fadeOut(speed);
+					$target.stop(false, true).fadeOut({
+						duration: speed,
+						easing: easing
+					});
 					break;
 				case 'slide':
-					$target.stop(false, true).slideUp(speed);
+					$target.stop(false, true).slideUp({
+						duration: speed,
+						easing: easing
+					});
 					break;
 				case 'none':
 					$target.stop(false, true).hide();
 					break;
 				default:
-					$target.stop(false, true).slideUp(speed);
+					$target.stop(false, true).slideUp({
+						duration: speed,
+						easing: easing
+					});
 					break;
 			}
 

@@ -1,0 +1,20 @@
+{
+  "name": "jquery.toggler.js",
+  "version": "0.1.0",
+  "description": "開閉するやつ。簡易なタブにも使える。",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oosugi20/jquery.toggler.js.git"
+  },
+  "author": "Makoto OOSUGI <oosugi20@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oosugi20/jquery.toggler.js/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0"
+  }
+}

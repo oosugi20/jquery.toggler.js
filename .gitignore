@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+Thumbs.db
+_notes/
+*/_notes/
+*.mno
+*.sass-cache
+.ftppass
+.grunt
+
+# gruntで展開されるファイルは除く
+jquery.toggler.js
+jquery.toggler.min.js
+!src/*

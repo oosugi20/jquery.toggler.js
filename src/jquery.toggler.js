@@ -1,9 +1,3 @@
-/*! jquery.toggler.js (git://github.com/oosugi20/jquery.toggler.js.git)
- * lastupdate: 2013-10-01
- * version: 0.1.0
- * author: Makoto OOSUGI <oosugi20@gmail.com>
- * License: MIT
- */
 ;(function ($, window, undefined) {
 
 'use strict';

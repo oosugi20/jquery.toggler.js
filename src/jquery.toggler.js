@@ -1,5 +1,4 @@
 ;(function ($, window, undefined) {
-
 'use strict';
 
 var $window = $(window);
@@ -197,6 +196,8 @@ Module = function Module (element, options) {
 
 		if ($target.data('toggler:state') !== 'opened') {
 
+			this.$el.trigger('toggler:beforeopen');
+
 			$others.data('toggler:state', 'closed');
 			if (isAutoClose) {
 				switch (effect) {
@@ -256,6 +257,8 @@ Module = function Module (element, options) {
 					});
 					break;
 			}
+
+			this.$el.trigger('toggler:afteropen');
 		}
 
 		return this;
@@ -275,6 +278,9 @@ Module = function Module (element, options) {
 		var $target = (target) ? this.filterContents(target) : this.$contents;
 
 		if ($target.data('toggler:state') !== 'closed') {
+
+			this.$el.trigger('toggler:beforeclose');
+
 			$target.data('toggler:state', 'closed');
 			this.updateStateClass();
 
@@ -312,6 +318,8 @@ Module = function Module (element, options) {
 				this._scrollTop = this._scrollTop || this.$el.offset().top - ($window.height() / 2);
 				$window.scrollTop(this._scrollTop);
 			}
+
+			this.$el.trigger('toggler:afterclose');
 		}
 
 		return this;

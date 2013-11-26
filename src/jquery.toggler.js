@@ -13,7 +13,8 @@ var DEFAULT_OPTIONS = {
 	easing: 'swing',
 	adjustPosition: false,
 	openSpeed: 250,
-	closeSpeed: 100
+	closeSpeed: 100,
+	enableMouseEnter: false
 };
 
 
@@ -39,13 +40,14 @@ Module = function Module (element, options) {
 	 */
 	fn._eventify = function () {
 		var _this = this;
+		var event = (this.options.enableMouseEnter) ? 'click mouseenter' : 'click';
 
 		// ボタンに対してイベントをデリゲート。
 		// data-toggler-btn属性の値をボタンのタイプとし、タイプごとのメソッドを呼ぶ。
 		// メソッドを呼ぶときには引数として data-toggler-targetの値を渡す。
 		// これが渡された場合は、data-toggler-contentsの値が一致するものだけ開閉する。
 		// undefinedが渡された場合は、data-toggler-contents全部が対象となる。
-		this.$el.on('click', '[data-toggler-btn]', function (e) {
+		this.$el.on(event, '[data-toggler-btn]', function (e) {
 			var $this = $(this)
 			var type = $this.attr('data-toggler-btn');
 			var target = $this.attr('data-toggler-target');

@@ -113,9 +113,11 @@
 <div style="height: 500px"></div>
 
 <script src="jquery.js"></script>
-<script src="jquery.toggler.js"></script>
+<script src="src/jquery.toggler.js"></script>
 <script>
-$('.mod-togglerUnit').toggler();
+$('.mod-togglerUnit').toggler().on('toggler:afteropen', function () {
+console.log('toggler:afteropen');
+});
 $('#example3').toggler({
 	openedClassName: 'custumOpened',
 	closedClassName: ''

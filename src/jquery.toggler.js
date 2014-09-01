@@ -195,6 +195,8 @@ Module = function Module (element, options) {
 		var isAutoClose = this.options.autoClose;
 		var $target = this.filterContents(target);
 		var $others = this.$contents.not($target);
+		var defer = $.Deferred();
+
 
 		if ($target.data('toggler:state') !== 'opened') {
 
@@ -240,27 +242,33 @@ Module = function Module (element, options) {
 				case 'fade':
 					$target.stop(false, true).fadeIn({
 						duration: speed,
-						easing: easing
+						easing: easing,
+						complete: defer.resolve
 					});
 					break;
 				case 'slide':
 					$target.stop(false, true).slideDown({
 						duration: speed,
-						easing: easing
+						easing: easing,
+						complete: defer.resolve
 					});
 					break;
 				case 'none':
 					$target.stop(false, true).show();
+					defer.resolve();
 					break;
 				default:
 					$target.stop(false, true).slideDown({
 						duration: speed,
-						easing: easing
+						easing: easing,
+						complete: defer.resolve
 					});
 					break;
 			}
 
-			this.$el.trigger('toggler:afteropen');
+			defer.done(function () {
+				_this.$el.trigger('toggler:afteropen');
+			});
 		}
 
 		return this;
